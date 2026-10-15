@@ -1,6 +1,6 @@
 # Grior
 
-A 3D platformer made with [Babylon.js](https://www.babylonjs.com/) as a 2022 school project.
+A 3D platformer that runs in the browser, made with [Babylon.js](https://www.babylonjs.com/) by a team of 5 students as a 2022 school project. Run and jump through 6 levels as fast as you can.
 
 **[Play it](https://ractouf.github.io/web2-2022-project-group-03/)**
 
