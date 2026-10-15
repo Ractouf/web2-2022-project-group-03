@@ -30,7 +30,8 @@ export default class Player extends TransformNode {
     h;
     v;
     gravity = new Vector3();
-    lastGroundPos = Vector3.Zero();
+    groundMesh;
+    lastGroundPos;
     grounded;
     jumpCount;
     moveDirection = new Vector3();
@@ -176,6 +177,14 @@ export default class Player extends TransformNode {
         }
 
         this.moveDirection = this.moveDirection.scaleInPlace(Player.PLAYER_SPEED * this.deltaTime);
+
+        // ride moving platforms: carry the player by however much the mesh underfoot moved
+        const ground = this.pickDown(0, 0, 0.6).pickedMesh;
+        const groundPos = ground && ground.getAbsolutePosition().clone();
+        if (ground && ground === this.groundMesh) this.moveDirection.addInPlace(groundPos.subtract(this.lastGroundPos));
+        this.groundMesh = ground;
+        this.lastGroundPos = groundPos;
+
         this.mesh.moveWithCollisions(this.moveDirection.addInPlace(this.gravity.scale(this.deltaTime)));
 
         if (this.isGrounded()) {
