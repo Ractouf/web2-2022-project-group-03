@@ -1,5 +1,6 @@
 import {
     ActionManager,
+    Axis,
     Engine,
     ExecuteCodeAction,
     HemisphericLight,
@@ -8,6 +9,7 @@ import {
     Quaternion,
     Scene,
     SceneLoader,
+    Space,
     Vector3,
 } from '@babylonjs/core';
 import '@babylonjs/loaders/glTF';
@@ -20,6 +22,18 @@ import loadEnvironment, { LAST_LEVEL } from './Environment';
 import Hud from './Hud';
 import PlayerInput from './Input';
 import Player from './Player';
+
+const WHEEL_RADIUS = 0.4;
+
+/**
+ * Moves a car forward and spins its wheels to match the distance travelled
+ */
+const driveCar = (car, step) => {
+    car.movePOV(0, 0, step);
+    car.getChildMeshes()
+        .filter((mesh) => mesh.name.includes('wheels'))
+        .forEach((wheel) => wheel.rotate(Axis.Y, step / WHEEL_RADIUS, Space.LOCAL));
+};
 
 const SPAWN = new Vector3(0, 2, 0);
 const CAMERA_SPAWN = new Vector3(-10, 5, 0);
@@ -228,7 +242,7 @@ export default class Game {
             const step = 5 * (this.engine.getDeltaTime() / 1000);
             cars.forEach(([mesh, atEnd, start]) => {
                 if (atEnd(mesh.position.floor())) mesh.position = start.clone();
-                mesh.movePOV(0, 0, step);
+                driveCar(mesh, step);
             });
         });
     }
@@ -270,7 +284,7 @@ export default class Game {
                 c.dispose();
                 return false;
             }
-            c.movePOV(0, 0, step);
+            driveCar(c, step);
             return true;
         });
 
@@ -282,7 +296,7 @@ export default class Game {
             rightLane = drive(rightLane, (p) => p.x > 140, 30 * deltaTime);
 
             if (car.position.x > 170) car.position = new Vector3(100, 0, 105);
-            car.movePOV(0, 0, 10 * deltaTime);
+            driveCar(car, 10 * deltaTime);
         });
     }
 
