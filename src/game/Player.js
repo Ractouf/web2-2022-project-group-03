@@ -24,8 +24,8 @@ export default class Player extends TransformNode {
     isFalling = false;
     jumped = false;
     static PLAYER_SPEED = 10;
-    static JUMP_FORCE = 15; // units/s
-    static GRAVITY = -50; // units/s², lower = floatier fall
+    static JUMP_FORCE = 15;
+    static GRAVITY = -50;
     deltaTime;
     h;
     v;
@@ -178,7 +178,6 @@ export default class Player extends TransformNode {
 
         this.moveDirection = this.moveDirection.scaleInPlace(Player.PLAYER_SPEED * this.deltaTime);
 
-        // ride moving platforms: carry the player by however much the mesh underfoot moved
         const ground = this.pickDown(0, 0, 0.6).pickedMesh;
         const groundPos = ground && ground.getAbsolutePosition().clone();
         if (ground && ground === this.groundMesh) this.moveDirection.addInPlace(groundPos.subtract(this.lastGroundPos));

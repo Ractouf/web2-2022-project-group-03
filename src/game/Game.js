@@ -23,20 +23,9 @@ import Hud from './Hud';
 import PlayerInput from './Input';
 import Player from './Player';
 
-const WHEEL_RADIUS = 0.4;
-
-/**
- * Moves a car forward and spins its wheels to match the distance travelled
- */
-const driveCar = (car, step) => {
-    car.movePOV(0, 0, step);
-    car.getChildMeshes()
-        .filter((mesh) => mesh.name.includes('wheels'))
-        .forEach((wheel) => wheel.rotate(Axis.Y, step / WHEEL_RADIUS, Space.LOCAL));
-};
-
 const SPAWN = new Vector3(0, 2, 0);
 const CAMERA_SPAWN = new Vector3(-10, 5, 0);
+const WHEEL_RADIUS = 0.4;
 
 // [x, z, y rotation in PI, lower z bound, upper z bound, initial direction]
 const PLATFORMS = [
@@ -50,7 +39,6 @@ const PLATFORMS = [
 ];
 
 export default class Game {
-    // ?level=N jumps straight to a level, falls back to 1 when missing or out of range
     level = Math.min(Math.max(parseInt(new URLSearchParams(window.location.search).get('level'), 10) || 1, 1), LAST_LEVEL);
     totalTime = 0;
     intervals = [];
@@ -165,7 +153,6 @@ export default class Game {
         this.totalTime += this.ui.time;
 
         if (this.level === LAST_LEVEL) {
-            // leave the render loop before disposing the engine
             setTimeout(() => this.quit(this.totalTime));
             return;
         }
@@ -214,6 +201,16 @@ export default class Game {
     }
 
     /**
+     * Moves a car forward and spins its wheels to match the distance travelled
+     */
+    static driveCar(car, step) {
+        car.movePOV(0, 0, step);
+        car.getChildMeshes()
+            .filter((mesh) => mesh.name.includes('wheels'))
+            .forEach((wheel) => wheel.rotate(Axis.Y, step / WHEEL_RADIUS, Space.LOCAL));
+    }
+
+    /**
      * Level 1: cars driving on loop in the background
      */
     async passingCars() {
@@ -244,7 +241,7 @@ export default class Game {
             const step = 5 * (this.engine.getDeltaTime() / 1000);
             cars.forEach(([mesh, atEnd, start]) => {
                 if (atEnd(mesh.position.floor())) mesh.position = start.clone();
-                driveCar(mesh, step);
+                Game.driveCar(mesh, step);
             });
         });
     }
@@ -286,7 +283,7 @@ export default class Game {
                 c.dispose();
                 return false;
             }
-            driveCar(c, step);
+            Game.driveCar(c, step);
             return true;
         });
 
@@ -298,7 +295,7 @@ export default class Game {
             rightLane = drive(rightLane, (p) => p.x > 140, 30 * deltaTime);
 
             if (car.position.x > 170) car.position = new Vector3(100, 0, 105);
-            driveCar(car, 10 * deltaTime);
+            Game.driveCar(car, 10 * deltaTime);
         });
     }
 
