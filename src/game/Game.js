@@ -36,7 +36,8 @@ const PLATFORMS = [
 ];
 
 export default class Game {
-    level = 1;
+    // ?level=N jumps straight to a level, falls back to 1 when missing or out of range
+    level = Math.min(Math.max(parseInt(new URLSearchParams(window.location.search).get('level'), 10) || 1, 1), LAST_LEVEL);
     totalTime = 0;
     intervals = [];
 
