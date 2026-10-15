@@ -24,8 +24,8 @@ export default class Player extends TransformNode {
     isFalling = false;
     jumped = false;
     static PLAYER_SPEED = 10;
-    static JUMP_FORCE = 0.5;
-    static GRAVITY = -1.8;
+    static JUMP_FORCE = 15; // units/s
+    static GRAVITY = -50; // units/s², lower = floatier fall
     deltaTime;
     h;
     v;
@@ -176,7 +176,7 @@ export default class Player extends TransformNode {
         }
 
         this.moveDirection = this.moveDirection.scaleInPlace(Player.PLAYER_SPEED * this.deltaTime);
-        this.mesh.moveWithCollisions(this.moveDirection.addInPlace(this.gravity));
+        this.mesh.moveWithCollisions(this.moveDirection.addInPlace(this.gravity.scale(this.deltaTime)));
 
         if (this.isGrounded()) {
             this.gravity.y = 0;
