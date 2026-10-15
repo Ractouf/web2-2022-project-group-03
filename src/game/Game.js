@@ -57,7 +57,7 @@ export default class Game {
 
     /**
      * Creates the canvas and engine and loads the first level
-     * @param {Function} onQuit Called once the game is closed
+     * @param {Function} onQuit Called once the game is closed, with the total time when every level was cleared
      */
     constructor(onQuit) {
         this.onQuit = onQuit;
@@ -164,14 +164,16 @@ export default class Game {
         this.levelDone = true;
         this.totalTime += this.ui.time;
 
-        const menu = this.level < LAST_LEVEL
-            ? Hud.createMenu(`LEVEL ${this.level} CLEARED IN ${this.ui.time}s`, [
-                ['NEXT LEVEL', () => this.nextLevel()],
-                ['QUIT', () => this.quit()],
-            ])
-            : Hud.createMenu(`YOU FINISHED IN ${this.totalTime}s`, [['MENU', () => this.quit()]]);
+        if (this.level === LAST_LEVEL) {
+            // leave the render loop before disposing the engine
+            setTimeout(() => this.quit(this.totalTime));
+            return;
+        }
 
-        this.ui.showMenu(menu);
+        this.ui.showMenu(Hud.createMenu(`LEVEL ${this.level} CLEARED IN ${this.ui.time}s`, [
+            ['NEXT LEVEL', () => this.nextLevel()],
+            ['QUIT', () => this.quit()],
+        ]));
     }
 
     clearIntervals() {
@@ -187,12 +189,12 @@ export default class Game {
         this.loadLevel();
     }
 
-    quit() {
+    quit(totalTime) {
         this.playing = false;
         this.clearIntervals();
         window.removeEventListener('resize', this.onResize);
         this.engine.dispose();
-        this.onQuit();
+        this.onQuit(totalTime);
     }
 
     /**

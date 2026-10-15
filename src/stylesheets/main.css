@@ -54,3 +54,14 @@ canvas {
     touch-action: none;
     outline: none;
 }
+
+.end h1 {
+    font-size: 96px;
+}
+
+.buttons {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 24px;
+}

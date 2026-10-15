@@ -15,13 +15,30 @@ const showMenu = () => {
         </section>`;
   music.play().catch(() => { }); // blocked until the first user interaction
 
-  main.querySelector('button').addEventListener('click', () => {
-    music.pause();
-    music.currentTime = 0;
-    main.innerHTML = '';
-
-    new Game(showMenu);
-  });
+  main.querySelector('button').addEventListener('click', startGame);
 };
+
+const showEnd = (totalTime) => {
+  main.innerHTML = `
+        <section class="menu end">
+            <h1>THANKS FOR PLAYING</h1>
+            <p>You finished in ${totalTime}s</p>
+            <div class="buttons">
+                <button class="again">PLAY AGAIN</button>
+                <button class="to-menu">MENU</button>
+            </div>
+        </section>`;
+
+  main.querySelector('.again').addEventListener('click', startGame);
+  main.querySelector('.to-menu').addEventListener('click', showMenu);
+};
+
+function startGame() {
+  music.pause();
+  music.currentTime = 0;
+  main.innerHTML = '';
+
+  new Game((totalTime) => (totalTime === undefined ? showMenu() : showEnd(totalTime)));
+}
 
 showMenu();
