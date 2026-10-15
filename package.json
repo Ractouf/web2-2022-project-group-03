@@ -1,0 +1,24 @@
+{
+    "name": "grior",
+    "version": "1.0.0",
+    "private": true,
+    "description": "3D platformer made with Babylon.js",
+    "scripts": {
+        "start": "webpack serve --mode development",
+        "build": "webpack --mode production"
+    },
+    "license": "CC-BY-SA-4.0",
+    "dependencies": {
+        "@babylonjs/core": "^5.31.2",
+        "@babylonjs/gui": "^5.33.0",
+        "@babylonjs/loaders": "^5.33.0"
+    },
+    "devDependencies": {
+        "css-loader": "^5.2.6",
+        "html-webpack-plugin": "^5.5.0",
+        "style-loader": "^2.0.0",
+        "webpack": "^5.38.1",
+        "webpack-cli": "^4.7.0",
+        "webpack-dev-server": "^4.11.1"
+    }
+}
